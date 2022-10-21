@@ -4,16 +4,14 @@
         $input = trim($input);
         $input = stripslashes($input);
         $input = htmlspecialchars($input);
-        $input = strtoupper($input);
         $input = str_replace(' ', '', $input);
         $input = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $input);
         $input = preg_replace('/[^A-Za-z0-9\-]/', '', $input);
+        $input = strtoupper($input);
         return $input;
     }
 
-    function verificaCodiceFiscale($nome, $cognome, $luogoNascita, $dataNascita, $sesso){
-        //Controllo vuoto/null/lunghezza
-        //Controllo data esplodibile
+    function calcolaCodiceFiscale($nome, $cognome, $luogoNascita, $dataNascita, $sesso){
         $cf = "";
         $cf .= estrazioneLettere($cognome, false);
         $cf .= estrazioneLettere($nome, true);
@@ -21,9 +19,33 @@
         $cf .= luogoNascita($luogoNascita);
         $cf .= carattereControllo($cf);
 
-        echo $cf;
+        return $cf;
     }
 
+    function verificaCodiceFiscale($codiceFiscale, $cfGenerato){
+        return $codiceFiscale === $cfGenerato;
+    }
+
+    function controlliInput($input, $lunghezza=null, $isData=false) {
+        if(empty($input)) {
+            return false;
+        }
+
+        if($lunghezza != null && strlen($input) != $lunghezza) {
+            return false;
+        }
+
+        if($isData) {
+            $data = explode("-", $input);
+            if(count($data) != 3) {
+                return false;
+            }
+            if(!checkdate($data[1], $data[2], $data[0])) {
+                return false;
+            }
+        }
+        return true;
+    }
     function estrazioneLettere($nominativo, $isNome=true){
         $cf = [];
         $lettere = getConsonantiVocali($nominativo);
@@ -95,10 +117,10 @@
 
     
     function luogoNascita($luogoNascita){
-        return "A662";
+        return getCode($luogoNascita);
     }
 
-    
+
     function carattereControllo($cf){
         $caratteri = ['A', 'B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7','8','9'];
         $conversioneDispari = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,0,1,2,3,4,5,6,7,8,9];
