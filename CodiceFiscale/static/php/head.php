@@ -6,3 +6,4 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <title>Codice Fiscale</title>
 <link rel="shortcut icon" href="./static/images/favicon.png" type="image/png">
+<link rel="stylesheet" href="./static/css/style.css">
